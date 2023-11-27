@@ -1,0 +1,49 @@
+.header {
+    display: flex;
+    background-color: rgba(6, 10, 255, 0.69);
+  
+    height: 50px;
+  }
+  
+  .form {
+    margin: auto auto;
+  
+    background-color: white;
+    padding: 0 3px;
+    border: 2px solid transparent;
+    border-radius: 2px;
+  
+    transition: 250ms;
+  }
+  
+  .form:focus-within {
+    border-radius: 5px;
+  }
+  
+  .button {
+    width: 35px;
+    min-height: 30px;
+    padding-right: 10px;
+  
+    background-color: transparent;
+    border: transparent;
+    cursor: pointer;
+  }
+  
+  .input {
+    width: 300px;
+    height: 22px;
+  
+    border: transparent;
+  }
+  
+  .input:focus-within {
+    border: transparent;
+    outline: transparent;
+  }
+  
+  @media screen and (max-width: 450px) {
+    .input {
+      width: 250px;
+    }
+  }
