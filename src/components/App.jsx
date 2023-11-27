@@ -171,32 +171,32 @@ const App = () => {
   const [currentImageDescription, setCurrentImageDescription] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-
-      try {
-        const { hits, totalHits } = await fetchImages(query);
-        const imagesArray = hits.map(hit => ({
-          id: hit.id,
-          description: hit.tags,
-          smallImage: hit.webformatURL,
-          largeImage: hit.largeImageURL,
-        }));
-
-        if (page === 1) {
-          setImages(imagesArray);
-          setImagesOnPage(imagesArray.length);
-          setTotalImages(totalHits);
-        } else {
-          setImages(prevImages => [...prevImages, ...imagesArray]);
-          setImagesOnPage(prevImagesOnPage => prevImagesOnPage + imagesArray.length);
+      const fetchData = async () => {
+        setIsLoading(true);
+      
+        try {
+          const { hits, totalHits } = await fetchImages(query, page);
+          const imagesArray = hits.map(hit => ({
+            id: hit.id,
+            description: hit.tags,
+            smallImage: hit.webformatURL,
+            largeImage: hit.largeImageURL,
+          }));
+      
+          if (page === 1) {
+            setImages(imagesArray);
+            setImagesOnPage(imagesArray.length);
+            setTotalImages(totalHits);
+          } else {
+            setImages(prevImages => [...prevImages, ...imagesArray]);
+            setImagesOnPage(prevImagesOnPage => prevImagesOnPage + imagesArray.length);
+          }
+        } catch (error) {
+          setError(error);
+        } finally {
+          setIsLoading(false);
         }
-      } catch (error) {
-        setError(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      };
 
     if (query) {
       fetchData();
@@ -210,7 +210,7 @@ const App = () => {
   const onNextFetch = () => {
     setPage(prevPage => prevPage + 1);
   };
-
+  
   const toggleModal = () => {
     setShowModal(prevShowModal => !prevShowModal);
   };
