@@ -27,7 +27,7 @@ const App = () => {
       setIsLoading(true);
   
       try {
-        const { hits, totalHits } = await fetchImages(query, 1);
+        const { hits, totalHits } = await fetchImages(query, page);
         const imagesArray = hits.map(hit => ({
           id: hit.id,
           description: hit.tags,
@@ -35,9 +35,14 @@ const App = () => {
           largeImage: hit.largeImageURL,
         }));
   
-        setImages(imagesArray);
-        setImagesOnPage(imagesArray.length);
-        setTotalImages(totalHits);
+        if (page === 1) {
+          setImages(imagesArray);
+          setImagesOnPage(imagesArray.length);
+          setTotalImages(totalHits);
+        } else {
+          setImages(prevImages => [...prevImages, ...imagesArray]);
+          setImagesOnPage(prevImagesOnPage => prevImagesOnPage + imagesArray.length);
+        }
       } catch (error) {
         setError(error);
       } finally {
@@ -46,10 +51,9 @@ const App = () => {
     };
   
     if (query) {
-      setPage(1); 
       fetchData();
     }
-  }, [query], page );
+  }, [query, page]);
   
 
   const getSearchRequest = query => {
