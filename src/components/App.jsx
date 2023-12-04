@@ -17,15 +17,15 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [images, setImages] = useState(null);
-  // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState(null);
   const [currentImageUrl, setCurrentImageUrl] = useState(null);
   const [currentImageDescription, setCurrentImageDescription] = useState(null);
+  const [isNewQuery, setIsNewQuery] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-  
+
       try {
         const { hits, totalHits } = await fetchImages(query, page);
         const imagesArray = hits.map(hit => ({
@@ -34,11 +34,12 @@ const App = () => {
           smallImage: hit.webformatURL,
           largeImage: hit.largeImageURL,
         }));
-  
-        if (page === 1) {
+
+        if (page === 1 || isNewQuery) {
           setImages(imagesArray);
           setImagesOnPage(imagesArray.length);
           setTotalImages(totalHits);
+          setIsNewQuery(false); /* Скидання статусу isNewQuery */
         } else {
           setImages(prevImages => [...prevImages, ...imagesArray]);
           setImagesOnPage(prevImagesOnPage => prevImagesOnPage + imagesArray.length);
@@ -49,21 +50,21 @@ const App = () => {
         setIsLoading(false);
       }
     };
-  
+
     if (query) {
       fetchData();
     }
-  }, [query, page]);
-  
+  }, [query, page, isNewQuery]);
 
   const getSearchRequest = query => {
     setQuery(query);
+    setIsNewQuery(true); /* Встановлення статусу isNewQuery в true при новому запиті */
   };
 
   const onNextFetch = () => {
     setPage(prevPage => prevPage + 1);
   };
-  
+
   const toggleModal = () => {
     setShowModal(prevShowModal => !prevShowModal);
   };
@@ -89,9 +90,7 @@ const App = () => {
 
       {isLoading && <Loader />}
 
-      {imagesOnPage >= 12 && imagesOnPage < totalImages && (
-        <Button onNextFetch={onNextFetch} />
-      )}
+      {imagesOnPage >= 12 && imagesOnPage < totalImages && <Button onNextFetch={onNextFetch} />}
 
       {showModal && (
         <Modal
